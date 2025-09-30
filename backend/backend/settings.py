@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis', # Tambahkan aplikasi GIS
+    'core',             # Tambahkan aplikasi Anda
 ]
 
 MIDDLEWARE = [
@@ -74,8 +76,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis', # <-- INI BAGIANNYA
+        'NAME': 'gis_platform_db',
+        'USER': 'postgres',
+        'PASSWORD': '123456789',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -120,3 +126,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+GDAL_LIBRARY_PATH = "C:\\Users\\Synner\\AppData\\Local\\Programs\\OSGeo4W\\bin\\gdal311.dll"
+GEOS_LIBRARY_PATH = "C:\\Users\\Synner\\AppData\\Local\\Programs\\OSGeo4W\\bin\\geos_c.dll"
+
