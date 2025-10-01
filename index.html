@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dasbor Proyek - Platform WebGIS Kolaboratif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Slate & Sky Blue -->
+    <!-- Application Structure Plan: The SPA is structured as a single-page, scrollable "Interactive Blueprint" to make the project plan document easily consumable. It's divided into four thematic sections: 1. **Ecosystem Explorer:** An interactive diagram of user roles and their actions (Use Cases). 2. **Architecture Overview:** A visual breakdown of the platform's core components and technology stack. 3. **Data Model Explorer:** An interactive Entity-Relationship Diagram (ERD). 4. **Development Roadmap:** A clickable timeline of the implementation phases. This structure was chosen to guide a user logically from the "who" and "what" (Ecosystem), to the "how" (Architecture & Data), and finally the "when" (Roadmap), making the dense project plan highly intuitive and explorable. -->
+    <!-- Visualization & Content Choices: 
+        - Actors & Use Cases: Goal is to organize roles and actions. Presented as an interactive diagram using styled HTML divs instead of static text. Interaction: Clicking an actor highlights their specific use cases, making relationships clear. Justification: More engaging and clearer than a list. Method: HTML/CSS/JS.
+        - Tech Stack: Goal is to inform about technology. Presented as visually distinct cards with icons. Interaction: None, purely informational. Justification: Quick visual scanning is more effective than a bulleted list. Method: HTML/CSS with Unicode icons.
+        - ERD: Goal is to explain complex data relationships. Presented as a navigable diagram of tables. Interaction: Clicking a table highlights it and its relationships, and displays its detailed schema in a side panel. Justification: This breaks down the most complex part of the plan into digestible, on-demand pieces. Method: HTML/CSS/JS.
+        - Roadmap: Goal is to show change over time. Presented as a series of clickable tabs/steps. Interaction: Clicking a phase reveals its specific goals. Justification: A clean, step-by-step presentation is better than a long wall of text. Method: HTML/CSS/JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        
+        .diagram-line {
+            position: absolute;
+            background-color: #cbd5e1; /* slate-300 */
+            z-index: 0;
+            transition: background-color 0.3s ease-in-out;
+        }
+        .actor-card, .usecase-card, .table-card {
+            transition: all 0.3s ease-in-out;
+            z-index: 10;
+        }
+        .actor-card.active, .usecase-card.active-uc, .table-card.active-table {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
+            border-color: #3b82f6;
+        }
+        .table-card.related-table {
+             border-color: #93c5fd; /* blue-300 */
+             box-shadow: 0 0 15px rgba(147, 197, 253, 0.5);
+        }
+        .phase-content { display: none; }
+        .phase-content.active { display: block; }
+        .phase-tab.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        /* ERD Styles */
+        .relation .line {
+            background-color: #cbd5e1;
+            position: absolute;
+            transition: background-color 0.3s ease;
+        }
+        .relation .cardinality {
+            position: absolute;
+        }
+        .relation .cardinality span {
+            display: block;
+            position: absolute;
+            background-color: #cbd5e1;
+            width: 12px;
+            height: 2px;
+            transition: background-color 0.3s ease;
+        }
+        /* Active State */
+        .relation.active .line,
+        .relation.active .cardinality span {
+            background-color: #3b82f6;
+            z-index: 1;
+        }
+
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-slate-700">
+                <span class="text-blue-500">GIS</span>Platform Blueprint
+            </div>
+            <div class="hidden md:flex space-x-6 text-slate-600">
+                <a href="#ecosystem" class="hover:text-blue-500">Ekosistem</a>
+                <a href="#architecture" class="hover:text-blue-500">Arsitektur</a>
+                <a href="#datamodel" class="hover:text-blue-500">Model Data</a>
+                <a href="#roadmap" class="hover:text-blue-500">Roadmap</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12">
+
+        <!-- Intro Section -->
+        <section class="text-center mb-20">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Platform WebGIS Kolaboratif & Marketplace Peta</h1>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto">Sebuah dasbor interaktif yang menguraikan visi, arsitektur, dan rencana pengembangan untuk ekosistem SIG berbasis web generasi berikutnya.</p>
+        </section>
+
+        <!-- Ecosystem Section -->
+        <section id="ecosystem" class="mb-24 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2">Ekosistem Pengguna & Interaksi</h2>
+            <p class="text-center text-slate-500 mb-12">Klik pada sebuah peran (Aktor) untuk melihat interaksi utama (Use Case) yang dapat mereka lakukan.</p>
+            
+            <div class="relative bg-white p-8 rounded-xl shadow-lg min-h-[600px] flex flex-col md:flex-row justify-around items-center gap-8">
+                <!-- Actors Column -->
+                <div class="flex flex-col gap-8 w-full md:w-1/4">
+                    <div id="actor-guest" class="actor-card border-2 border-slate-200 p-4 rounded-lg text-center cursor-pointer bg-white">
+                        <h3 class="font-bold text-lg">👤 Pengguna Publik (Guest)</h3>
+                        <p class="text-sm text-slate-500">Pengunjung tanpa akun.</p>
+                    </div>
+                    <div id="actor-member" class="actor-card border-2 border-slate-200 p-4 rounded-lg text-center cursor-pointer bg-white">
+                        <h3 class="font-bold text-lg">👥 Pengguna Terdaftar (Member)</h3>
+                        <p class="text-sm text-slate-500">Memiliki akun & workspace.</p>
+                    </div>
+                    <div id="actor-publisher" class="actor-card border-2 border-slate-200 p-4 rounded-lg text-center cursor-pointer bg-white">
+                        <h3 class="font-bold text-lg">🏪 Publisher / Developer</h3>
+                        <p class="text-sm text-slate-500">Penjual peta di marketplace.</p>
+                    </div>
+                </div>
+                
+                <!-- Use Cases Column -->
+                <div class="grid grid-cols-2 gap-4 w-full md:w-2/3">
+                    <div id="uc-dashboard" class="usecase-card guest member publisher border-2 border-slate-200 p-3 rounded-lg bg-slate-50"><h4 class="font-semibold">Melihat Dashboard</h4></div>
+                    <div id="uc-marketplace" class="usecase-card guest member publisher border-2 border-slate-200 p-3 rounded-lg bg-slate-50"><h4 class="font-semibold">Menelusuri Marketplace</h4></div>
+                    <div id="uc-buy" class="usecase-card guest member publisher border-2 border-slate-200 p-3 rounded-lg bg-slate-50"><h4 class="font-semibold">Membeli Peta</h4><p class="text-xs text-slate-400">Membutuhkan Login</p></div>
+                    <div id="uc-login" class="usecase-card guest member publisher border-2 border-slate-200 p-3 rounded-lg bg-slate-50"><h4 class="font-semibold">Login / Signup</h4></div>
+                    <div id="uc-manage-project" class="usecase-card member publisher border-2 border-blue-100 p-3 rounded-lg bg-blue-50"><h4 class="font-semibold">Mengelola Proyek</h4></div>
+                    <div id="uc-collaborate" class="usecase-card member publisher border-2 border-blue-100 p-3 rounded-lg bg-blue-50"><h4 class="font-semibold">Berkolaborasi</h4></div>
+                    <div id="uc-download" class="usecase-card member publisher border-2 border-blue-100 p-3 rounded-lg bg-blue-50"><h4 class="font-semibold">Mengunduh Peta</h4></div>
+                    <div id="uc-sell" class="usecase-card publisher border-2 border-sky-100 p-3 rounded-lg bg-sky-50"><h4 class="font-semibold">Mengelola Produk Peta</h4></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Section -->
+        <section id="architecture" class="mb-24 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2">Arsitektur Platform</h2>
+            <p class="text-center text-slate-500 mb-12">Komponen utama dan tumpukan teknologi yang digunakan.</p>
+
+            <div class="grid md:grid-cols-2 gap-8 items-start">
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">Komponen Inti</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-slate-100 rounded-lg">
+                            <h4 class="font-bold text-lg">Workspace GIS Kolaboratif</h4>
+                            <p class="text-slate-600">Ruang kerja privat untuk membuat proyek, mengunggah data, dan berkolaborasi dengan tim dalam satu peta.</p>
+                        </div>
+                        <div class="p-4 bg-slate-100 rounded-lg">
+                            <h4 class="font-bold text-lg">Marketplace Peta</h4>
+                            <p class="text-slate-600">Platform e-commerce untuk jual beli peta berkualitas tinggi, termasuk GeoPDF untuk navigasi offline.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">Tumpukan Teknologi</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
+                        <div class="p-3 bg-slate-100 rounded-lg">
+                            <div class="text-4xl">💻</div>
+                            <h4 class="font-semibold mt-2">React.js</h4>
+                            <p class="text-xs text-slate-500">Frontend</p>
+                        </div>
+                        <div class="p-3 bg-slate-100 rounded-lg">
+                            <div class="text-4xl">🐍</div>
+                            <h4 class="font-semibold mt-2">Django</h4>
+                             <p class="text-xs text-slate-500">Backend</p>
+                        </div>
+                        <div class="p-3 bg-slate-100 rounded-lg">
+                            <div class="text-4xl">🐘</div>
+                            <h4 class="font-semibold mt-2">PostGIS</h4>
+                             <p class="text-xs text-slate-500">Database</p>
+                        </div>
+                        <div class="p-3 bg-slate-100 rounded-lg">
+                            <div class="text-4xl">☁️</div>
+                            <h4 class="font-semibold mt-2">Cloud Storage</h4>
+                             <p class="text-xs text-slate-500">Penyimpanan File</p>
+                        </div>
+                        <div class="p-3 bg-slate-100 rounded-lg">
+                            <div class="text-4xl">🐳</div>
+                            <h4 class="font-semibold mt-2">Docker</h4>
+                             <p class="text-xs text-slate-500">Deployment</p>
+                        </div>
+                         <div class="p-3 bg-slate-100 rounded-lg">
+                            <div class="text-4xl">💳</div>
+                            <h4 class="font-semibold mt-2">Payment Gateway</h4>
+                             <p class="text-xs text-slate-500">Transaksi</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Model Section -->
+        <section id="datamodel" class="mb-24 scroll-mt-20">
+             <h2 class="text-3xl font-bold text-center mb-2">Model Data Relasional</h2>
+            <p class="text-center text-slate-500 mb-12">Klik pada sebuah tabel untuk melihat detail dan relasi yang terhubung.</p>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- ERD Diagram -->
+                <div id="erd-container" class="w-full lg:w-2/3 bg-white p-6 rounded-xl shadow-lg relative min-h-[650px] font-mono text-sm">
+                    <!-- Tables -->
+                    <div id="table-user" class="table-card absolute cursor-pointer border-2 p-2 rounded-lg bg-white w-40 text-center" style="top: 48%; left: 2%;">User</div>
+                    <div id="table-publisher" class="table-card absolute cursor-pointer border-2 p-2 rounded-lg bg-white w-40 text-center" style="top: 15%; left: 2%;">Publisher</div>
+                    <div id="table-mapproduct" class="table-card absolute cursor-pointer border-2 p-2 rounded-lg bg-white w-40 text-center" style="top: 15%; left: 35%;">MapProduct</div>
+                    <div id="table-purchase" class="table-card absolute cursor-pointer border-2 p-2 rounded-lg bg-white w-40 text-center" style="top: 48%; left: 35%;">Purchase</div>
+                    <div id="table-project" class="table-card absolute cursor-pointer border-2 p-2 rounded-lg bg-white w-40 text-center" style="top: 80%; left: 35%;">Project</div>
+                    <div id="table-geospatialdata" class="table-card absolute cursor-pointer border-2 p-2 rounded-lg bg-white w-44 text-center" style="top: 80%; left: 68%;">GeospatialData</div>
+                    <div id="table-projectcollaborator" class="table-card absolute cursor-pointer border-2 p-2 rounded-lg bg-white w-48 text-center" style="top: 48%; left: 65%;">ProjectCollaborator</div>
+                    <div id="table-project_layers" class="table-card absolute cursor-pointer border-2 p-2 rounded-lg bg-white w-44 text-center" style="top: 64%; left: 51%;">Project_Layers</div>
+
+                    <!-- Relations -->
+                    <div class="relation" data-relation="user-publisher" style="position: absolute; top: 20%; left: 13%; width: 11%; height: 28%;">
+                        <div class="line" style="width: 2px; height: 100%; top: 0; left: 0;"></div>
+                        <div class="line" style="width: 100%; height: 2px; top: 0; left: 0;"></div>
+                        <div class="cardinality" style="top: 98%; left: -5px;"><span style="transform: rotate(90deg); width: 12px; height: 2px;"></span><span style="transform: rotate(90deg); width: 12px; height: 2px; margin-left: 3px;"></span></div>
+                        <div class="cardinality" style="top: -6px; left: 98%;"><span style="transform: rotate(0deg);"></span><span style="margin-top: 3px; transform: rotate(0deg);"></span></div>
+                    </div>
+                    <div class="relation" data-relation="publisher-mapproduct" style="position: absolute; top: 20%; left: 13%; width: 22%; height: 2px;">
+                        <div class="line" style="width: 100%; height: 2px;"></div>
+                        <div class="cardinality" style="top: -5px; left: -1px;"><span style="transform: rotate(90deg);"></span><span style="transform: rotate(90deg); margin-left: 3px;"></span></div>
+                        <div class="cardinality" style="top: -5px; left: 98%;"><span style="transform: rotate(45deg);"></span><span style="transform: rotate(-45deg);"></span><span style="margin-top:0; transform: rotate(0deg);"></span></div>
+                    </div>
+                    <div class="relation" data-relation="mapproduct-purchase" style="position: absolute; top: 20%; left: 45%; width: 2px; height: 28%;">
+                        <div class="line" style="width: 2px; height: 100%;"></div>
+                        <div class="cardinality" style="top: -1px; left: -5px;"><span style="transform: rotate(0deg);"></span><span style="margin-top:3px; transform: rotate(0deg);"></span></div>
+                        <div class="cardinality" style="top: 98%; left: -5px;"><span style="transform: rotate(135deg);"></span><span style="transform: rotate(-135deg);"></span><span style="transform: rotate(90deg);"></span></div>
+                    </div>
+                    <div class="relation" data-relation="user-purchase" style="position: absolute; top: 53%; left: 13%; width: 22%; height: 2px;">
+                        <div class="line" style="width: 100%; height: 2px;"></div>
+                        <div class="cardinality" style="top: -5px; left: -1px;"><span style="transform: rotate(90deg);"></span><span style="transform: rotate(90deg); margin-left: 3px;"></span></div>
+                        <div class="cardinality" style="top: -5px; left: 98%;"><span style="transform: rotate(45deg);"></span><span style="transform: rotate(-45deg);"></span><span style="margin-top:0; transform: rotate(0deg);"></span></div>
+                    </div>
+                    <div class="relation" data-relation="user-projectcollaborator" style="position: absolute; top: 53%; left: 13%; width: 52%; height: 2px;">
+                         <div class="line" style="width: 100%; height: 2px;"></div>
+                         <div class="cardinality" style="top: -5px; left: -1px;"><span style="transform: rotate(90deg);"></span><span style="transform: rotate(90deg); margin-left: 3px;"></span></div>
+                         <div class="cardinality" style="top: -5px; left: 98%;"><span style="transform: rotate(45deg);"></span><span style="transform: rotate(-45deg);"></span><span style="margin-top:0; transform: rotate(0deg);"></span></div>
+                    </div>
+                    <div class="relation" data-relation="project-projectcollaborator" style="position: absolute; top: 53%; left: 45%; width: 29%; height: 27%;">
+                        <div class="line" style="width: 2px; height: 100%; top: 0; left: 99%;"></div>
+                        <div class="line" style="width: 100%; height: 2px; top: 100%; left: 0;"></div>
+                        <div class="cardinality" style="top: -1px; left: 94%;"><span style="transform: rotate(0deg);"></span><span style="margin-top:3px; transform: rotate(0deg);"></span></div>
+                        <div class="cardinality" style="top: 98%; left: -1px;"><span style="transform: rotate(45deg);"></span><span style="transform: rotate(-45deg);"></span><span style="margin-top:0; transform: rotate(0deg);"></span></div>
+                    </div>
+                    <div class="relation" data-relation="project-project_layers" style="position: absolute; top: 70%; left: 45%; width: 6%; height: 10%;">
+                        <div class="line" style="width: 100%; height: 2px; top: 100%;"></div>
+                        <div class="line" style="width: 2px; height: 100%; top: 0; left: 0;"></div>
+                         <div class="cardinality" style="top: -1px; left: -5px;"><span style="transform: rotate(45deg);"></span><span style="transform: rotate(-45deg);"></span><span style="margin-top:0; transform: rotate(0deg);"></span></div>
+                         <div class="cardinality" style="top: 98%; left: 98%;"><span style="transform: rotate(90deg);"></span><span style="transform: rotate(90deg); margin-left: 3px;"></span></div>
+                    </div>
+                    <div class="relation" data-relation="geospatialdata-project_layers" style="position: absolute; top: 70%; left: 63%; width: 5%; height: 10%;">
+                        <div class="line" style="width: 100%; height: 2px; top: 100%; left: 0;"></div>
+                        <div class="line" style="width: 2px; height: 100%; top: 0; right: 0;"></div>
+                        <div class="cardinality" style="top: -1px; right: -5px;"><span style="transform: rotate(135deg);"></span><span style="transform: rotate(-135deg);"></span><span style="margin-top:0; transform: rotate(180deg);"></span></div>
+                        <div class="cardinality" style="top: 98%; left: -1px;"><span style="transform: rotate(90deg);"></span><span style="transform: rotate(90deg); margin-left: 3px;"></span></div>
+                    </div>
+                </div>
+
+                <!-- Table Details -->
+                <div class="w-full lg:w-1/3 bg-white p-6 rounded-xl shadow-lg">
+                    <h3 id="details-title" class="text-xl font-bold mb-4">Detail Tabel</h3>
+                    <div id="details-content" class="text-sm">
+                        <p class="text-slate-500">Pilih sebuah tabel dari diagram untuk melihat skema detailnya di sini.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Roadmap Section -->
+        <section id="roadmap" class="scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2">Roadmap Pengembangan</h2>
+            <p class="text-center text-slate-500 mb-12">Proyek akan dibangun dalam beberapa fase yang terkelola.</p>
+
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Phase Tabs -->
+                <div class="w-full md:w-1/4 flex md:flex-col justify-center gap-2">
+                    <button class="phase-tab active text-left p-4 rounded-lg transition" data-phase="1">
+                        <span class="font-bold">Fase 1:</span> Fondasi & Autentikasi
+                    </button>
+                    <button class="phase-tab text-left p-4 rounded-lg transition" data-phase="2">
+                        <span class="font-bold">Fase 2:</span> Inti Workspace
+                    </button>
+                    <button class="phase-tab text-left p-4 rounded-lg transition" data-phase="3">
+                        <span class="font-bold">Fase 3:</span> Kolaborasi
+                    </button>
+                     <button class="phase-tab text-left p-4 rounded-lg transition" data-phase="4">
+                        <span class="font-bold">Fase 4:</span> Marketplace
+                    </button>
+                    <button class="phase-tab text-left p-4 rounded-lg transition" data-phase="5">
+                        <span class="font-bold">Fase 5:</span> Peningkatan
+                    </button>
+                </div>
+                
+                <!-- Phase Content -->
+                <div class="w-full md:w-3/4 bg-white p-8 rounded-xl shadow-lg">
+                    <div id="phase-1" class="phase-content active">
+                        <h3 class="text-2xl font-bold mb-4">Fase 1: Fondasi Backend & Autentikasi</h3>
+                        <ul class="list-disc list-inside space-y-2 text-slate-700">
+                            <li>Setup proyek Django, GeoDjango, dan database PostGIS.</li>
+                            <li>Membuat model database inti (User, Project, GeospatialData).</li>
+                            <li>Membangun API untuk registrasi & login (email & Google).</li>
+                            <li>Konfigurasi dasar untuk penyimpanan file di cloud.</li>
+                        </ul>
+                    </div>
+                     <div id="phase-2" class="phase-content">
+                        <h3 class="text-2xl font-bold mb-4">Fase 2: Fungsionalitas Inti Workspace</h3>
+                        <ul class="list-disc list-inside space-y-2 text-slate-700">
+                            <li>Membangun UI frontend dengan React untuk halaman peta.</li>
+                            <li>Implementasi fitur pembuatan proyek & upload data.</li>
+                            <li>Visualisasi layer data dasar di peta Leaflet.</li>
+                            <li>Membangun fitur Layer Control Panel dan Geocoder (pencarian lokasi).</li>
+                        </ul>
+                    </div>
+                     <div id="phase-3" class="phase-content">
+                        <h3 class="text-2xl font-bold mb-4">Fase 3: Fitur Kolaborasi & Pustaka Data</h3>
+                        <ul class="list-disc list-inside space-y-2 text-slate-700">
+                            <li>Implementasi model `ProjectCollaborator` dan API untuk mengundang tim.</li>
+                            <li>Menyesuaikan UI untuk menampilkan proyek bersama dan mengatur peran.</li>
+                            <li>Membangun API dan UI untuk Pustaka Data yang dikelola Admin.</li>
+                            <li>Fitur impor data dari Pustaka ke dalam proyek pengguna.</li>
+                        </ul>
+                    </div>
+                     <div id="phase-4" class="phase-content">
+                        <h3 class="text-2xl font-bold mb-4">Fase 4: Pembangunan Marketplace</h3>
+                        <ul class="list-disc list-inside space-y-2 text-slate-700">
+                            <li>Membuat model database untuk Publisher, MapProduct, dan Purchase.</li>
+                            <li>Membangun API untuk menelusuri, melihat detail, dan membeli produk.</li>
+                            <li>Integrasi dengan payment gateway (Midtrans/Xendit).</li>
+                            <li>Membangun halaman Marketplace dan alur pembelian di frontend.</li>
+                        </ul>
+                    </div>
+                     <div id="phase-5" class="phase-content">
+                        <h3 class="text-2xl font-bold mb-4">Fase 5: Peningkatan & Optimasi</h3>
+                        <ul class="list-disc list-inside space-y-2 text-slate-700">
+                            <li>Implementasi fitur "Should-Have" seperti Alat Ukur dan Filter Atribut.</li>
+                            <li>Optimasi performa rendering peta untuk data besar (clustering/vector tiles).</li>
+                            <li>Menambahkan fitur ulasan dan rating di Marketplace.</li>
+                            <li>Penyempurnaan UI/UX berdasarkan masukan pengguna awal.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tableDetailsData = {
+                user: {
+                    name: 'User',
+                    schema: `<div class="font-mono bg-slate-100 p-2 rounded"><b>id (PK)</b>: integer</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>username</b>: varchar</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>email</b>: varchar</div>`,
+                    relations: '<b>One-to-One</b> dengan Publisher.<br><b>One-to-Many</b> ke Purchase.<br><b>One-to-Many</b> ke ProjectCollaborator.'
+                },
+                publisher: {
+                    name: 'Publisher',
+                    schema: `<div class="font-mono bg-slate-100 p-2 rounded"><b>user_id (PK, FK)</b>: integer</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>publisher_name</b>: varchar</div>`,
+                    relations: '<b>One-to-One</b> dengan User.<br><b>One-to-Many</b> ke MapProduct.'
+                },
+                project: {
+                    name: 'Project',
+                    schema: `<div class="font-mono bg-slate-100 p-2 rounded"><b>id (PK)</b>: integer</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>title</b>: varchar</div>`,
+                    relations: '<b>One-to-Many</b> ke ProjectCollaborator.<br><b>Many-to-Many</b> dengan GeospatialData (via Project_Layers).'
+                },
+                 geospatialdata: {
+                    name: 'GeospatialData',
+                    schema: `<div class="font-mono bg-slate-100 p-2 rounded"><b>id (PK)</b>: integer</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>name</b>: varchar</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>is_public</b>: boolean</div>`,
+                    relations: '<b>Many-to-Many</b> dengan Project (via Project_Layers).'
+                },
+                mapproduct: {
+                    name: 'MapProduct',
+                    schema: `<div class="font-mono bg-slate-100 p-2 rounded"><b>id (PK)</b>: integer</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>publisher_id (FK)</b>: integer</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>title</b>: varchar</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>price</b>: decimal</div>`,
+                    relations: '<b>Many-to-One</b> ke Publisher.<br><b>One-to-Many</b> ke Purchase.'
+                },
+                 purchase: {
+                    name: 'Purchase',
+                    schema: `<div class="font-mono bg-slate-100 p-2 rounded"><b>id (PK)</b>: integer</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>user_id (FK)</b>: integer</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>product_id (FK)</b>: integer</div>`,
+                    relations: '<b>Many-to-One</b> ke User.<br><b>Many-to-One</b> ke MapProduct.'
+                },
+                projectcollaborator: {
+                    name: 'ProjectCollaborator',
+                    schema: `<div class="font-mono bg-slate-100 p-2 rounded"><b>id (PK)</b>: integer</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>user_id (FK)</b>: integer</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>project_id (FK)</b>: integer</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>role</b>: varchar</div>`,
+                    relations: 'Tabel perantara (Many-to-Many) antara User dan Project.'
+                },
+                project_layers: {
+                    name: 'Project_Layers',
+                    schema: `<div class="font-mono bg-slate-100 p-2 rounded"><b>id (PK)</b>: integer</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>project_id (FK)</b>: integer</div><div class="font-mono bg-slate-100 p-2 rounded mt-1"><b>data_id (FK)</b>: integer</div>`,
+                    relations: 'Tabel perantara (Many-to-Many) antara Project dan GeospatialData.'
+                }
+            };
+            
+            const tableRelationships = {
+                'user': ['publisher', 'purchase', 'projectcollaborator'],
+                'publisher': ['user', 'mapproduct'],
+                'mapproduct': ['publisher', 'purchase'],
+                'purchase': ['user', 'mapproduct'],
+                'project': ['projectcollaborator', 'project_layers'],
+                'geospatialdata': ['project_layers'],
+                'projectcollaborator': ['user', 'project'],
+                'project_layers': ['project', 'geospatialdata']
+            };
+            
+            // Ecosystem Interaction
+            const actors = document.querySelectorAll('.actor-card');
+            const usecases = document.querySelectorAll('.usecase-card');
+
+            actors.forEach(actor => {
+                actor.addEventListener('click', () => {
+                    actors.forEach(a => a.classList.remove('active'));
+                    actor.classList.add('active');
+                    const actorId = actor.id.split('-')[1];
+                    usecases.forEach(uc => {
+                        uc.classList.toggle('active-uc', uc.classList.contains(actorId));
+                    });
+                });
+            });
+
+            // Data Model Interaction
+            const tables = document.querySelectorAll('.table-card');
+            const relations = document.querySelectorAll('.relation');
+            const detailsTitle = document.getElementById('details-title');
+            const detailsContent = document.getElementById('details-content');
+
+            tables.forEach(table => {
+                table.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const tableId = table.id.split('-')[1];
+                    const relatedTables = tableRelationships[tableId] || [];
+
+                    tables.forEach(t => {
+                        const currentId = t.id.split('-')[1];
+                        t.classList.remove('active-table', 'related-table');
+                        if (currentId === tableId) {
+                            t.classList.add('active-table');
+                        } else if (relatedTables.includes(currentId)) {
+                            t.classList.add('related-table');
+                        }
+                    });
+
+                    relations.forEach(relation => {
+                        const relationId = relation.dataset.relation;
+                        const parts = relationId.split('-');
+                        const isActive = parts.includes(tableId);
+                        relation.classList.toggle('active', isActive);
+                    });
+
+                    const data = tableDetailsData[tableId];
+                    if(data) {
+                        detailsTitle.innerText = `Detail Tabel: ${data.name}`;
+                        detailsContent.innerHTML = `<h4 class="font-semibold mb-2">Skema:</h4>${data.schema}<h4 class="font-semibold mt-4 mb-2">Relasi:</h4><p class="text-slate-600">${data.relations}</p>`;
+                    }
+                });
+            });
+            
+            document.getElementById('erd-container').addEventListener('click', () => {
+                 tables.forEach(t => t.classList.remove('active-table', 'related-table'));
+                 relations.forEach(relation => relation.classList.remove('active'));
+                 detailsTitle.innerText = `Detail Tabel`;
+                 detailsContent.innerHTML = `<p class="text-slate-500">Pilih sebuah tabel dari diagram untuk melihat skema detailnya di sini.</p>`;
+            });
+
+            // Roadmap Interaction
+            const phaseTabs = document.querySelectorAll('.phase-tab');
+            const phaseContents = document.querySelectorAll('.phase-content');
+
+            phaseTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    phaseTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const phase = tab.dataset.phase;
+                    phaseContents.forEach(content => {
+                        content.classList.toggle('active', content.id === `phase-${phase}`);
+                    });
+                });
+            });
+
+            // Smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

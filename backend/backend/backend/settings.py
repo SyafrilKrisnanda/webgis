@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-import os
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,18 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis', # Tambahkan aplikasi GIS
     'core',             # Tambahkan aplikasi Anda
-    'rest_framework',  # Tambahkan Django REST Framework
-    'rest_framework.authtoken',  # Token Authentication
-    'dj_rest_auth',    # Tambahkan dj-rest-auth
-    'django.contrib.sites',  # Tambahkan sites framework
-    'allauth',         # Tambahkan django-allauth
-    'allauth.account', # Akun allauth
-    'allauth.socialaccount', 
-    'dj_rest_auth.registration', # Registrasi dengan dj-rest-auth
-    
 ]
-
-SITE_ID = 1  # Pastikan SITE_ID sesuai dengan situs Anda
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -60,7 +49,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -139,26 +127,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# --- PENGATURAN GIS LENGKAP ---
-OSGEO4W_DIR = r'C:\Users\Synner\AppData\Local\Programs\OSGeo4W' # Ganti jika path berbeda
-if os.path.isdir(OSGEO4W_DIR):
-    GDAL_LIBRARY_PATH = os.path.join(OSGEO4W_DIR, 'bin', 'gdal311.dll') # Ganti gdal311.dll jika perlu
-    GEOS_LIBRARY_PATH = os.path.join(OSGEO4W_DIR, 'bin', 'geos_c.dll')
-    PROJ_LIBRARY_PATH = os.path.join(OSGEO4W_DIR, 'bin', 'proj.dll')
-    os.environ['PROJ_LIB'] = os.path.join(OSGEO4W_DIR, 'share', 'proj')
+GDAL_LIBRARY_PATH = "C:\\Users\\Synner\\AppData\\Local\\Programs\\OSGeo4W\\bin\\gdal311.dll"
+GEOS_LIBRARY_PATH = "C:\\Users\\Synner\\AppData\\Local\\Programs\\OSGeo4W\\bin\\geos_c.dll"
 
-
-# --- KONFIGURASI DJANGO REST FRAMEWORK & OTENTIKASI ---
-REST_FRAMEWORK = {
-    # Aturan default: SEMUA endpoint API mewajibkan user untuk login.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-    # Otentikasi default sekarang menggunakan Token, bukan lagi Session
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-    ],
-}
-
-# Menambahkan ini agar email konfirmasi ditampilkan di console saat development
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
