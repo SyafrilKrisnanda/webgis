@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cetak Biru Interaktif - Platform WebGIS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Slate & Sky Blue -->
+    <!-- Application Structure Plan: The SPA is structured as a single-page, scrollable "Interactive Blueprint" to visualize the project's frontend plan. It's divided into thematic sections that follow the logic of the source document: 1. **Filosofi Desain:** Core principles as clear cards. 2. **Struktur Aplikasi:** An interactive diagram showing page relationships. 3. **Komponen Global:** A dynamic mockup of the Navbar (toggling between logged-in/out states) and Footer. 4. **Rancangan Per Halaman:** A tabbed interface to explore detailed, interactive wireframe mockups for the Homepage, Marketplace, and Workspace. This structure was chosen to transform the static text-based plan into an engaging, explorable, and easy-to-understand visual guide for developers and stakeholders. -->
+    <!-- Visualization & Content Choices: 
+        - Design Philosophy: Goal=Inform. Method=Simple cards with text. Interaction=None. Justification=Quick, scannable information. Library=HTML/CSS.
+        - App Structure: Goal=Organize. Method=Diagram built with styled divs and lines. Interaction=Clicking a page highlights it. Justification=More visual and engaging than a list. Library=HTML/CSS/JS.
+        - Global Components: Goal=Inform/Visualize. Method=High-fidelity mockups of Navbar/Footer. Interaction=Toggle button to switch Navbar's logged-in state. Justification=Provides a concrete preview of key UI elements. Library=HTML/CSS/JS.
+        - Page Layouts: Goal=Organize/Detail. Method=Tabbed interface showing wireframe mockups for each page. Interaction=Clicking tabs to switch between detailed page layouts. Justification=Breaks down complex layouts into manageable, on-demand views, making the core design tangible. Library=HTML/CSS/JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; }
+        .tab-btn.active { border-color: #3b82f6; background-color: #eff6ff; color: #3b82f6; }
+        .page-layout { display: none; }
+        .page-layout.active { display: block; }
+        .mockup-block { border: 2px dashed #9ca3af; padding: 0.5rem; text-align: center; font-size: 0.8rem; color: #4b5563; background-color: #f9fafb; }
+        .mockup-block-dark { border: 2px dashed #6b7280; background-color: #374151; color: #d1d5db; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">
+                <span class="text-blue-500">Cetak Biru</span> Interaktif
+            </h1>
+            <nav class="hidden md:flex space-x-6 text-slate-600 font-medium">
+                <a href="#filosofi" class="hover:text-blue-500">Filosofi</a>
+                <a href="#struktur" class="hover:text-blue-500">Struktur</a>
+                <a href="#komponen" class="hover:text-blue-500">Komponen</a>
+                <a href="#rancangan" class="hover:text-blue-500">Rancangan</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <!-- Intro -->
+        <section class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-extrabold mb-4">Rancangan Layout & UX - WebGIS Platform</h2>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto">Sebuah visualisasi interaktif dari dokumen perencanaan frontend untuk memandu proses pengembangan.</p>
+        </section>
+
+        <!-- Filosofi Desain -->
+        <section id="filosofi" class="mb-16 scroll-mt-24">
+            <h3 class="text-3xl font-bold text-center mb-10">1. Filosofi Desain</h3>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="text-4xl mb-4">✨</div>
+                    <h4 class="text-xl font-bold mb-2">Bersih & Modern</h4>
+                    <p class="text-slate-600">Tampilan minimalis dan profesional dengan banyak ruang kosong untuk kenyamanan visual.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="text-4xl mb-4">🎯</div>
+                    <h4 class="text-xl font-bold mb-2">Fokus pada Konten</h4>
+                    <p class="text-slate-600">Desain tidak boleh mengganggu, memastikan peta dan data menjadi pusat perhatian utama.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <div class="text-4xl mb-4">🧭</div>
+                    <h4 class="text-xl font-bold mb-2">Intuitif</h4>
+                    <p class="text-slate-600">Pengguna harus dapat menavigasi dan menggunakan fitur dengan mudah tanpa perlu banyak panduan.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Struktur Aplikasi -->
+        <section id="struktur" class="mb-16 scroll-mt-24">
+            <h3 class="text-3xl font-bold text-center mb-10">2. Struktur Aplikasi</h3>
+            <div class="bg-white p-8 rounded-lg shadow-md">
+                <p class="text-center text-slate-600 mb-8">Aplikasi akan terdiri dari beberapa halaman utama yang saling terhubung untuk melayani berbagai peran pengguna.</p>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6 text-center">
+                    <div class="p-4 border-2 border-blue-500 rounded-lg bg-blue-50">
+                        <h5 class="font-bold">Homepage</h5>
+                        <p class="text-sm text-slate-500">Etalase utama</p>
+                    </div>
+                    <div class="p-4 border-2 border-slate-300 rounded-lg">
+                        <h5 class="font-bold">Marketplace</h5>
+                        <p class="text-sm text-slate-500">Jual beli peta</p>
+                    </div>
+                    <div class="p-4 border-2 border-slate-300 rounded-lg">
+                        <h5 class="font-bold">Workspace</h5>
+                        <p class="text-sm text-slate-500">Area kerja GIS (login)</p>
+                    </div>
+                    <div class="p-4 border-2 border-slate-300 rounded-lg">
+                        <h5 class="font-bold">Otentikasi</h5>
+                        <p class="text-sm text-slate-500">Login/Register</p>
+                    </div>
+                    <div class="p-4 border-2 border-slate-300 rounded-lg">
+                        <h5 class="font-bold">Halaman Artikel</h5>
+                        <p class="text-sm text-slate-500">Berita & Panduan</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Komponen Global -->
+        <section id="komponen" class="mb-16 scroll-mt-24">
+            <h3 class="text-3xl font-bold text-center mb-10">3. Komponen Global</h3>
+            <div class="space-y-12">
+                <!-- Navbar Mockup -->
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-2xl font-bold">Navbar (Bilah Navigasi)</h4>
+                        <button id="toggle-login-btn" class="bg-blue-500 text-white font-medium py-2 px-4 rounded-lg text-sm">Toggle Login State</button>
+                    </div>
+                    <p class="text-slate-600 mb-4">Navbar akan selalu tampil di bagian atas semua halaman untuk memastikan navigasi yang mudah dan konsisten.</p>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <!-- Logged Out State -->
+                        <div id="navbar-logged-out" class="p-3 flex justify-between items-center">
+                            <div class="text-lg font-bold"><span class="text-blue-500">Web</span>GIS</div>
+                            <div class="hidden md:flex items-center space-x-4 text-sm font-medium text-slate-600">
+                                <div><a href="#marketplace-teaser">Marketplace</a></div>
+                                <div><a href="#article-carousel">Artikel</a></div>
+                                <div><a href="#how-to-use">Cara Penggunaan</a></div>
+                                <div><a href="#about-us">Tentang Kami</a></div>
+                                <div><a href="#contact">Kontak</a></div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="text-sm font-medium text-slate-600 py-1 px-3 rounded-md">Sign In</div>
+                                <div class="bg-blue-500 text-white text-sm font-medium py-1 px-3 rounded-md">Sign Up</div>
+                            </div>
+                        </div>
+                        <!-- Logged In State -->
+                        <div id="navbar-logged-in" class="p-3 flex justify-between items-center hidden">
+                            <div class="text-lg font-bold"><span class="text-blue-500">Web</span>GIS</div>
+                            <div class="hidden md:flex items-center space-x-4 text-sm font-medium text-slate-600">
+                                <div>Marketplace</div>
+                                <div>Workspace</div>
+                                <div>Artikel</div>
+                                <div><a href="#about-us">Tentang Kami</a></div>
+                                <div><a href="#contact">Kontak</a></div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="text-xl">🛒</div>
+                                <div class="w-8 h-8 rounded-full bg-slate-300"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Footer Mockup -->
+                <div>
+                     <h4 class="text-2xl font-bold mb-4">Footer (Bagian Bawah)</h4>
+                     <p class="text-slate-600 mb-4">Sama seperti Navbar, Footer akan selalu tampil di bagian bawah semua halaman.</p>
+                     <div class="bg-slate-800 text-white p-8 rounded-lg shadow-md grid grid-cols-2 md:grid-cols-4 gap-8">
+                         <div>
+                            <h5 class="font-bold mb-2">Sitemap</h5>
+                            <ul class="space-y-1 text-sm text-slate-300"><li>Beranda</li><li>Marketplace</li><li>Artikel</li></ul>
+                         </div>
+                         <div>
+                            <h5 class="font-bold mb-2">Bantuan</h5>
+                            <ul class="space-y-1 text-sm text-slate-300"><li>Kontak</li><li>FAQ</li></ul>
+                         </div>
+                          <div>
+                            <h5 class="font-bold mb-2">Legal</h5>
+                            <ul class="space-y-1 text-sm text-slate-300"><li>Kebijakan Privasi</li><li>Ketentuan</li></ul>
+                         </div>
+                         <div class="col-span-2 md:col-span-4 mt-4 text-center border-t border-slate-700 pt-4 text-xs text-slate-400">
+                            © 2025 WebGIS Platform.
+                         </div>
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rancangan Per Halaman -->
+        <section id="rancangan" class="scroll-mt-24">
+             <h3 class="text-3xl font-bold text-center mb-10">4. Rancangan Per Halaman</h3>
+             <div class="bg-white p-6 rounded-lg shadow-md">
+                 <!-- Tabs -->
+                <div class="flex border-b mb-6">
+                    <button class="tab-btn active font-medium py-2 px-4 border-b-2" data-target="homepage">Homepage</button>
+                    <button class="tab-btn font-medium py-2 px-4 border-b-2 border-transparent" data-target="marketplace">Marketplace</button>
+                    <button class="tab-btn font-medium py-2 px-4 border-b-2 border-transparent" data-target="workspace">Workspace</button>
+                </div>
+                <!-- Tab Content -->
+                <div>
+                    <!-- Homepage Layout -->
+                    <div id="homepage" class="page-layout active space-y-4">
+                        <p class="text-slate-600 mb-4">Struktur halaman utama dari atas ke bawah, kini dengan lebih banyak bagian konten.</p>
+                        <div id="hero-section" class="mockup-block h-40 flex items-center justify-center">Hero Section (Gambar, Judul, Search Bar)</div>
+                        <div id="marketplace-teaser" class="mockup-block h-24 flex items-center justify-center">Marketplace Teaser (Tombol)</div>
+                        <div id="article-carousel" class="mockup-block h-32 flex items-center justify-center">Article Carousel (Kartu Geser)</div>
+                        <div id="how-to-use" class="mockup-block h-28 flex items-center justify-center">Tata Cara Menggunakan WebGIS</div>
+                        <div id="about-us" class="mockup-block h-28 flex items-center justify-center">"Tentang Kami" Section</div>
+                        <div id="contact" class="mockup-block h-24 flex items-center justify-center">Kontak</div>
+                    </div>
+                    <!-- Marketplace Layout -->
+                    <div id="marketplace" class="page-layout">
+                        <p class="text-slate-600 mb-4">Layout 2 kolom untuk menelusuri dan memvisualisasikan peta yang dijual. Halaman ini berada di antara Navbar dan Footer.</p>
+                        <div class="flex gap-4 h-96">
+                            <div class="w-1/3 mockup-block flex flex-col gap-2">
+                                <div>Sidebar</div>
+                                <div class="mockup-block-dark flex-grow">Daftar Peta</div>
+                            </div>
+                            <div class="w-2/3 mockup-block flex items-center justify-center">Area Peta Interaktif</div>
+                        </div>
+                    </div>
+                    <!-- Workspace Layout -->
+                    <div id="workspace" class="page-layout">
+                        <p class="text-slate-600 mb-4">Layout 2 kolom untuk area kerja GIS utama. Halaman ini juga akan memiliki Navbar dan Footer yang konsisten.</p>
+                        <div class="flex gap-4 h-96">
+                            <div class="w-1/4 mockup-block flex flex-col gap-2">
+                                <div>Sidebar</div>
+                                <div class="mockup-block-dark flex-grow">Info Proyek & Kontrol Layer</div>
+                            </div>
+                            <div class="w-3/4 mockup-block flex items-center justify-center">Area Peta Leaflet</div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Navbar Toggle
+            const toggleBtn = document.getElementById('toggle-login-btn');
+            const navLoggedIn = document.getElementById('navbar-logged-in');
+            const navLoggedOut = document.getElementById('navbar-logged-out');
+            let isLoggedIn = false;
+
+            toggleBtn.addEventListener('click', () => {
+                isLoggedIn = !isLoggedIn;
+                navLoggedIn.classList.toggle('hidden', !isLoggedIn);
+                navLoggedOut.classList.toggle('hidden', isLoggedIn);
+            });
+
+            // Tabs for Page Layouts
+            const tabContainer = document.querySelector('#rancangan');
+            const tabButtons = tabContainer.querySelectorAll('.tab-btn');
+            const pageLayouts = tabContainer.querySelectorAll('.page-layout');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.target;
+
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    pageLayouts.forEach(layout => {
+                        layout.classList.toggle('active', layout.id === targetId);
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
