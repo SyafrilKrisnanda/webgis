@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'allauth.account', # Akun allauth
     'allauth.socialaccount', 
     'dj_rest_auth.registration', # Registrasi dengan dj-rest-auth
+    'corsheaders',
     
 ]
 
@@ -61,6 +62,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -162,3 +165,8 @@ REST_FRAMEWORK = {
 
 # Menambahkan ini agar email konfirmasi ditampilkan di console saat development
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173", # Alamat default untuk React dev server Vite
+    "http://127.0.0.1:5173",
+]
